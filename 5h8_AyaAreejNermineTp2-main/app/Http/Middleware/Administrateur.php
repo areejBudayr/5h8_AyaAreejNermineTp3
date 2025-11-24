@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+class Administrateur
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function handle(Request $request, Closure $next)
+    {
+        $user = Auth::user();
+
+        // Utilisateur non authentifié
+        if (!$user) {
+            return redirect()->route('home')->with('error', 'Vous devez être connecté.');
+        }
+
+        // Utilisateur authentifié mais pas administrateur
+        if ($user->role !== User::ROLE_ADMIN) {
+            return redirect()->route('home')->with('error', 'Accès réservé aux administrateurs.');
+        }
+
+        // L'utilisateur est un admin, on laisse passer la requête
+        return $next($request);
+    }
+}
