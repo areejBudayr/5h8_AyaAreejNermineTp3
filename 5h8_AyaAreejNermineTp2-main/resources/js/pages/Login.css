@@ -1,0 +1,124 @@
+/* PAGE LOGIN */
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffd6ea, #ffe6f4, #ffeef8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Overlays pastel doux */
+.login-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 143, 192, 0.20), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(247, 194, 214, 0.20), transparent 60%);
+  opacity: 0.6;
+}
+
+/* GLASS BOX */
+.glass {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 40px rgba(255, 0, 120, 0.18);
+}
+
+/* LOGIN BOX */
+.login-box {
+  width: 420px;
+  padding: 40px;
+  z-index: 2;
+  text-align: center;
+  animation: fadeSlide 0.6s ease-out;
+}
+
+/* TITLE */
+.login-title {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  background: linear-gradient(135deg, #ff4fa3, #ff79b0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* FORM */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 15px 18px;
+  border-radius: 14px;
+  border: 2px solid #f3c1d8;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  outline: none;
+  transition: 0.25s;
+}
+
+.login-form input:focus {
+  background: white;
+  border-color: #ff4fa3;
+  box-shadow: 0 0 0 4px rgba(255, 79, 160, 0.18);
+}
+
+/* BUTTON */
+.login-btn {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ff4fa3, #ff79b0);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 6px 18px rgba(255, 0, 130, 0.25);
+}
+
+.login-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255, 0, 130, 0.35);
+}
+
+/* REGISTER LINK */
+.login-register {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-register span {
+  color: #ff4fa3;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-register span:hover {
+  text-decoration: underline;
+}
+
+/* ANIMATION */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

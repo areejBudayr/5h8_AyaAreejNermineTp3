@@ -1,0 +1,276 @@
+/* ===== Modal Full-Screen ArticleForm ===== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --noir: #0a0a0a;
+  --noir-card: #121212;
+  --noir-input: #1a1a1a;
+  --blanc: #ffffff;
+  --gris-text: #b0b0b0;
+  --gris-border: #2a2a2a;
+  --rose-accent: #ff1493;
+  --rose-hover: #ff69b4;
+  --rose-glow: rgba(255, 20, 147, 0.3);
+}
+
+* {
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Full-screen modal overlay */
+.form-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.96);
+  backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Wrapper pour centrer verticalement */
+.form-container > * {
+  width: 100%;
+  max-width: 650px;
+}
+
+/* Titre moderne centré */
+.form-container h2 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 2.5rem;
+  color: var(--blanc);
+  text-align: center;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Carte formulaire premium */
+.article-form {
+  background: var(--noir-card);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--gris-border);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    0 0 1px rgba(255, 20, 147, 0.2) inset;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Labels élégants */
+.article-form label {
+  display: block;
+  color: var(--gris-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Inputs style premium */
+.article-form input[type="text"],
+.article-form input[type="url"],
+.article-form textarea {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--noir-input);
+  border: 1.5px solid var(--gris-border);
+  border-radius: 10px;
+  color: var(--blanc);
+  font-size: 0.95rem;
+  font-weight: 400;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.article-form textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+/* Focus avec effet luxueux */
+.article-form input:focus,
+.article-form textarea:focus {
+  border-color: var(--rose-accent);
+  background: rgba(26, 26, 26, 0.8);
+  box-shadow: 
+    0 0 0 3px rgba(255, 20, 147, 0.1),
+    0 4px 20px var(--rose-glow);
+  transform: translateY(-2px);
+}
+
+.article-form input::placeholder,
+.article-form textarea::placeholder {
+  color: #4a4a4a;
+}
+
+/* Preview image premium */
+.preview-image {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0.5rem auto 1rem;
+  display: block;
+  border: 2px solid var(--gris-border);
+  background: var(--noir-input);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.preview-image:hover {
+  border-color: var(--rose-accent);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.7),
+    0 0 30px var(--rose-glow);
+  transform: translateY(-4px);
+}
+
+/* Bouton CTA spectaculaire */
+.update-button {
+  width: 100%;
+  padding: 1.15rem 2rem;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--rose-accent) 0%, #ff0080 100%);
+  border: none;
+  border-radius: 10px;
+  color: var(--blanc);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 6px 20px rgba(255, 20, 147, 0.4),
+    0 0 1px rgba(255, 255, 255, 0.2) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de brillance */
+.update-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.update-button:hover::before {
+  left: 100%;
+}
+
+.update-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 30px rgba(255, 20, 147, 0.6),
+    0 0 1px rgba(255, 255, 255, 0.3) inset;
+  background: linear-gradient(135deg, #ff0080 0%, var(--rose-accent) 100%);
+}
+
+.update-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 4px 15px rgba(255, 20, 147, 0.5),
+    0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .article-form {
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .form-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .preview-image {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .article-form {
+    padding: 3rem;
+  }
+}
+
+/* Scrollbar custom pour l'overlay */
+.form-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  background: var(--gris-border);
+  border-radius: 4px;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+  background: var(--rose-accent);
+}

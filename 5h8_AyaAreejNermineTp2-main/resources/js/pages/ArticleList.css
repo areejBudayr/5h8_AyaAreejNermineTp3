@@ -1,0 +1,328 @@
+/* =========================================
+   NAAR — Login Overlay avec fond articles blurrés
+   ========================================= */
+
+:root{
+  --black:#000;
+  --ink:#0e0e10;
+  --panel:#0b0b0e;
+  --line:#1d1d22;
+  --white:#fff;
+  --pink:#f7c2d6;
+  --pink-2:#f3a9c6;
+  --pink-neon:#ff8fc0;
+}
+
+/* ======== Correction essentielle : positions pour la pile ======== */
+.article-container {
+  position: relative;
+  z-index: 1;
+}
+
+body.show-login-overlay .article-container {
+  filter: blur(15px) brightness(0.35) saturate(0.7);
+  transform: scale(1.08);
+  pointer-events: none;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+body.show-login-overlay::before {
+  z-index: 5 !important;
+}
+
+body.show-login-overlay .login-container {
+  position: relative;
+  z-index: 10 !important;
+}
+
+/* =============== ÉTAT: Overlay de connexion actif =============== */
+body.show-login-overlay {
+  overflow: hidden;
+}
+
+/* Voile sombre par-dessus les articles */
+body.show-login-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(247,194,214,0.04), transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(255,143,192,0.03), transparent 50%),
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.92) 0%,
+      rgba(0,0,0,0.85) 30%,
+      rgba(0,0,0,0.88) 70%,
+      rgba(0,0,0,0.95) 100%
+    );
+  backdrop-filter: blur(8px) saturate(80%);
+  animation: overlayFadeIn 0.6s ease;
+  pointer-events:none;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Login container au-dessus de tout */
+body.show-login-overlay .login-container {
+  animation: loginSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes loginSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =============== Mobile first (elegant & refined) =============== */
+.login-container{
+  background: transparent;
+  color:var(--white);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:1.5rem;
+  padding:1.5rem;
+  position: relative;
+}
+
+.login-container h2{
+  color:var(--pink);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:1.6rem;
+  margin:0;
+  text-shadow:0 2px 12px rgba(247,194,214,.4);
+}
+
+.login-form{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  width:100%;
+  max-width:440px;
+}
+
+.login-form input{
+  width:100%;
+  padding:1rem 1.2rem;
+  border-radius:14px;
+  border:1.5px solid var(--line);
+  background:linear-gradient(145deg, rgba(11,11,14,0.95), rgba(14,14,16,0.98));
+  color:var(--white);
+  outline:none;
+  transition:all .35s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size:1rem;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+.login-form input::placeholder{
+  color:rgba(255,255,255,0.4);
+  transition:color .3s ease;
+}
+
+.login-form input:focus::placeholder{
+  color:rgba(255,255,255,0.6);
+}
+
+.login-form input:focus{
+  border-color:var(--pink);
+  box-shadow:
+    0 0 0 4px rgba(247,194,214,.22),
+    0 6px 20px rgba(247,194,214,0.15);
+  background:linear-gradient(145deg, rgba(14,14,16,1), rgba(17,17,19,1));
+}
+
+.login-form button{
+  position:relative;
+  overflow:hidden;
+  margin-top:.5rem;
+  border:2px solid var(--pink);
+  border-radius:999px;
+  padding:1.1rem 1.5rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--black);
+  background:linear-gradient(135deg,var(--pink),var(--pink-2),var(--pink));
+  background-size:200% 100%;
+  transition:all .4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(247,194,214,.35);
+}
+
+.login-form button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(247,194,214,.5);
+}
+
+.login-form button:active{
+  transform:translateY(0);
+}
+
+/* =============== Desktop (ABSOLUTELY UNFORGETTABLE) =============== */
+@media (min-width:992px){
+  .login-container{
+    position:fixed; 
+    inset:0;
+    display:flex; 
+    flex-direction:column;
+    align-items:center; 
+    justify-content:center;
+    gap:2rem;
+    background:
+      radial-gradient(1400px 900px at 12% 18%, rgba(255,143,192,.09), transparent 65%),
+      radial-gradient(1000px 800px at 88% 82%, rgba(247,194,214,.07), transparent 70%),
+      radial-gradient(800px 600px at 50% 50%, rgba(255,143,192,.04), transparent 80%),
+      transparent;
+    overflow:hidden;
+  }
+
+  .login-container::before{
+    content:"";
+    position:absolute; 
+    inset:-25%;
+    background:
+      conic-gradient(from 0deg at 50% 50%,
+        rgba(255,143,192,.32), 
+        rgba(247,194,214,.24),
+        rgba(255,143,192,.16), 
+        rgba(243,169,198,.20),
+        rgba(0,0,0,0) 75%);
+    filter:blur(90px) saturate(130%);
+    animation:aurora 16s ease-in-out infinite;
+    opacity:.65;
+    pointer-events:none;
+    mix-blend-mode:screen;
+  }
+
+  .login-container::after{
+    content:"";
+    position:absolute; 
+    inset:0;
+    background:
+      radial-gradient(2.5px 2.5px at 8% 15%, rgba(255,255,255,.18), transparent 65%),
+      radial-gradient(2px 2px at 25% 72%, rgba(255,255,255,.14), transparent 60%),
+      radial-gradient(2.5px 2.5px at 68% 28%, rgba(255,255,255,.18), transparent 65%),
+      radial-gradient(2px 2px at 82% 58%, rgba(255,255,255,.14), transparent 60%),
+      radial-gradient(2.5px 2.5px at 52% 12%, rgba(255,255,255,.18), transparent 65%),
+      radial-gradient(1.5px 1.5px at 38% 88%, rgba(255,255,255,.12), transparent 55%),
+      radial-gradient(2px 2px at 90% 20%, rgba(255,255,255,.16), transparent 60%);
+    animation:stars 10s ease-in-out infinite alternate;
+    pointer-events:none;
+    opacity:.5;
+  }
+
+  .login-container h2{
+    position:relative;
+    margin:0 0 1rem;
+    font-size:clamp(2.6rem,1.8rem + 2.6vw,4rem);
+    letter-spacing:.20em;
+    background:linear-gradient(135deg, #fff 0%, var(--pink) 50%, var(--pink-neon) 100%);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:titleGlow 4s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .login-container h2::after{
+    content:"";
+    position:absolute; 
+    left:50%; 
+    transform:translateX(-50%);
+    bottom:-1rem; 
+    height:3px;
+    width:clamp(160px,14vw,300px);
+    background:linear-gradient(90deg,transparent,var(--pink-neon),var(--pink),var(--pink-neon),transparent);
+    background-size:200% 100%;
+    animation:glowline 2.8s ease-in-out infinite, shimmer 3s linear infinite;
+    border-radius:2px;
+  }
+
+  .login-container h2::before{
+    content:"";
+    position:absolute; 
+    left:50%; 
+    transform:translateX(-50%);
+    bottom:-1.8rem; 
+    width:clamp(200px,28vw,500px); 
+    height:18px;
+    background:radial-gradient(65% 100% at 50% 50%, rgba(255,143,192,.45) 0%, rgba(255,143,192,.12) 55%, transparent 75%);
+    filter:blur(10px); 
+    opacity:.95;
+    animation:beamPulse 3.5s ease-in-out infinite;
+  }
+
+  .login-form{
+    position:relative;
+    width:min(600px,90vw);
+    padding:2.8rem 2.5rem;
+    border-radius:28px;
+    border:1.5px solid rgba(255,255,255,.08);
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.02)),
+      linear-gradient(180deg, rgba(247,194,214,.02), transparent),
+      rgba(14,14,16,0.95);
+    box-shadow:
+      0 32px 100px rgba(0,0,0,.65),
+      0 12px 40px rgba(255,143,192,.12) inset,
+      0 1px 0 rgba(255,255,255,.08) inset;
+    backdrop-filter:blur(20px) saturate(110%);
+    gap:1.2rem;
+    z-index: 2;
+  }
+}
+
+/* Keyframes déjà existants (non modifiés) */
+@keyframes aurora { /* ... */ }
+@keyframes stars { /* ... */ }
+@keyframes titleGlow { /* ... */ }
+@keyframes glowline { /* ... */ }
+@keyframes shimmer { /* ... */ }
+@keyframes beamPulse { /* ... */ }
+@keyframes auraPulse { /* ... */ }
+@keyframes borderSweep { /* ... */ }
+@keyframes btnBreathe { /* ... */ }
+@keyframes confetti { /* ... */ }
+
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{ 
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+}
+
+/* =========================================
+   GRILLE ARTICLE (inchangée, sauf z-index)
+   ========================================= */
+
+.article-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  width: 100%;
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.article-container > * {
+  width: auto !important;
+  max-width: none !important;
+  flex: none !important;
+}
+
+/* ... (tout ton code article-card, buttons, media, modal etc. inchangé) */
