@@ -1,11 +1,9 @@
-/* AVANT : #root */
-/* APRÈS : #app  (car dans Blade c’est <div id="app"></div>) */
-#app {
+#root {
     width: 100%;
-    max-width: none;
+    max-width: none; /* ⬅ enlève la limite 1280px */
     margin: 0 auto;
-    padding: 24px;
-    text-align: initial;
+    padding: 24px; /* tu peux mettre 0 si tu veux collé aux bords */
+    text-align: initial; /* évite de centrer tout le texte par défaut */
 }
 
 .logo {

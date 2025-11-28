@@ -2,20 +2,28 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
 import "./ArticleForm.css";
+import fond from "../../assets/fond2.png";
 
 const ArticleForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [articles, setArticles] = useOutletContext();
-    const { isLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, user } = useContext(AuthContext);
 
-    const index = id ? Number(id) : null;
+    // const index = id ? Number(id) : null;
 
+    // useEffect(() => {
+    //     if (!isLoggedIn) {
+    //         setArticles([]);
+    //     }
+    // }, [isLoggedIn]);
+
+    // 🔐 BLOQUER L'ACCÈS SI L'UTILISATEUR N'EST PAS ADMIN
     useEffect(() => {
-        if (!isLoggedIn) {
-            setArticles([]);
+        if (!user?.isAdmin) {
+            navigate("/"); // redirection automatique
         }
-    }, [isLoggedIn]);
+    }, [user]);
 
     const articleAjouter =
         index !== null && articles[index]
@@ -45,41 +53,77 @@ const ArticleForm = () => {
     };
 
     return (
-        <div className="form-container">
-            <h2>
-                {index !== null ? "Modifier un article" : "Ajouter un article"}
-            </h2>
-            <form onSubmit={handleSubmit} className="article-form">
-                <label>Description</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
+        <div
+            className="page-wrapper"
+            style={{
+                backgroundImage: `url(${fond})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+            }}
+        >
+            <div className="form-container">
+                <form onSubmit={handleSubmit} className="article-form">
+                    <h2 className="form-title">
+                        {index !== null
+                            ? "Modifier un article"
+                            : "Ajouter un article"}
+                    </h2>
 
-                <label>Type</label>
-                <textarea
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                    required
-                />
+                    <label>Description :</label>
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                    />
 
-                <label>Prix</label>
-                <input
-                    type="text"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                />
+                    <label>Type :</label>
+                    <input
+                        type="text"
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                        required
+                    />
 
-                {image && (
-                    <img src={image} alt="preview" className="preview-image" />
-                )}
+                    <label>Prix :</label>
+                    <input
+                        type="text"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        required
+                    />
 
-                <button type="submit" className="update-button">
-                    {index !== null ? "Mettre à jour" : "Ajouter"}
-                </button>
-            </form>
+                    <label>Image (URL) :</label>
+                    <input
+                        type="text"
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
+                        placeholder="/src/assets/exemple.png"
+                    />
+
+                    {image && (
+                        <img
+                            src={image}
+                            alt="preview"
+                            className="preview-image"
+                        />
+                    )}
+
+                    <div className="form-buttons">
+                        <button type="submit" className="update-button">
+                            {index !== null ? "Mettre à jour" : "Ajouter"}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={() => navigate("/")}
+                        >
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

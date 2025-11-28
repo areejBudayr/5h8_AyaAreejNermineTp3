@@ -1,18 +1,18 @@
+// resources/js/pages/RootLayout.jsx
 import { Outlet } from "react-router-dom";
-import Header from "../components/header/Header";
+import { useContext, useState } from "react";
+
+import ARTICLES from "../data/articles";
+import { CartContext } from "../CartContext";
 
 const RootLayout = () => {
-    // si tu veux passer des articles aux enfants :
-    // const [articles, setArticles] = useState([...]);
+    const [articles, setArticles] = useState(ARTICLES);
+    const { addToCart } = useContext(CartContext);
 
-    return (
-        <>
-            <Header />
-            <main>
-                <Outlet /* context={[articles, setArticles]} */ />
-            </main>
-        </>
-    );
+    // Ce qui sera partagé à toutes les pages enfants
+    const outletContext = { articles, setArticles, addToCart };
+
+    return <Outlet context={outletContext} />;
 };
 
 export default RootLayout;

@@ -1,18 +1,18 @@
+// resources/js/App.jsx
+import React from "react";
 import { RouterProvider } from "react-router-dom";
-import { useCallback, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import router from "./router"; // <-- notre nouveau router/index.js
+import router from "./router";
+
+import { AuthProvider } from "./AuthContext"; // si ton AuthContext est à la racine JS
+import { CartProvider } from "./CartContext"; // idem pour CartContext
 
 const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const login = useCallback(() => setIsLoggedIn(true), []);
-    const logout = useCallback(() => setIsLoggedIn(false), []);
-
     return (
-        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-            <RouterProvider router={router} />
-        </AuthContext.Provider>
+        <AuthProvider>
+            <CartProvider>
+                <RouterProvider router={router} />
+            </CartProvider>
+        </AuthProvider>
     );
 };
 

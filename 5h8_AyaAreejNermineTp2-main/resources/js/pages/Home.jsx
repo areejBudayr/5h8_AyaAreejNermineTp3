@@ -1,54 +1,75 @@
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+// resources/js/pages/Home.jsx
+import { useState, useContext } from "react";
+import { useNavigate, Link, useOutletContext } from "react-router-dom";
+
 import { AuthContext } from "../AuthContext";
 
-import modele from "../assets/modele.png"; // ✓ utilisé dans <img>
-import fond from "../assets/fond.png"; // ✓ utilisé en background
-import articles from "../data/articles";
+import modele from "../assets/modele.png";
+import fond from "../assets/fond.png";
 import "./Home.css";
 
 const Home = () => {
-    // const [articles] = useOutletContext();
-    const { isLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, logout, user } = useContext(AuthContext);
+
+    // articles + addToCart viennent de RootLayout
+    const { articles, addToCart } = useOutletContext();
+
+    const [addedIndex, setAddedIndex] = useState(null);
     const navigate = useNavigate();
 
     return (
         <div className="home">
             {/* ===== HEADER ===== */}
             <header className="site-header glass-header">
-                <div className="logo">PinkWear</div>
+                <div className="logo">NAAR</div>
                 <nav>
-                    <a href="/">Accueil</a>
-                    <a href="/articles">Articles</a>
-                    <a href="/chandails">Chandails</a>
-                    <a href="/pantalons">Pantalons</a>
-                    <a href="/jupes&robes">Jupes et robes</a>
-                    <a href="/hoodies&vestes">Hoodies et vestes</a>
+                    <Link to="/">Accueil</Link>
+                    <Link to="/articles">Articles</Link>
+                    <Link to="/categorie/Chandails">Chandails</Link>
+                    <Link to="/categorie/Pantalons">Pantalons</Link>
+                    <Link to="/categorie/Jupes_et_robes">Jupes et robes</Link>
+                    <Link to="/categorie/Hoodies_et_vestes">
+                        Hoodies et vestes
+                    </Link>
 
-                    {isLoggedIn && <a href="/add">Ajouter</a>}
+                    {user && !user.isAdmin && (
+                        <button
+                            className="login-btn"
+                            onClick={() => navigate("/panier")}
+                        >
+                            Panier
+                        </button>
+                    )}
 
-                    <button
-                        className="login-btn"
-                        onClick={() => navigate("/login")}
-                    >
-                        Se connecter
-                    </button>
-                    <button
-                        className="login-btn"
-                        onClick={() => navigate("/register")}
-                    >
-                        S'inscrire
-                    </button>
+                    {!isLoggedIn ? (
+                        <>
+                            <button
+                                className="login-btn"
+                                onClick={() => navigate("/login")}
+                            >
+                                Se connecter
+                            </button>
+                            <button
+                                className="login-btn"
+                                onClick={() => navigate("/register")}
+                            >
+                                S'inscrire
+                            </button>
+                        </>
+                    ) : (
+                        <button className="login-btn" onClick={logout}>
+                            Se déconnecter
+                        </button>
+                    )}
                 </nav>
             </header>
 
             {/* ===== HERO ===== */}
             <section
                 className="hero"
-                style={{ backgroundImage: `url(${fond})` }} // ✓ UTILISATION DU FOND IMPORTÉ
+                style={{ backgroundImage: `url(${fond})` }}
             >
                 <div className="hero-content">
-                    {/* Bloc Glass gauche */}
                     <div className="glass hero-box">
                         <h1 className="hero-title">Collection 2025</h1>
                         <p className="hero-subtitle">
@@ -56,7 +77,7 @@ const Home = () => {
                             pastel.
                         </p>
 
-                        {isLoggedIn ? (
+                        {user?.isAdmin ? (
                             <button
                                 className="hero-btn"
                                 onClick={() => navigate("/add")}
@@ -73,20 +94,28 @@ const Home = () => {
                         )}
                     </div>
 
-                    {/* IMAGE DES MODÈLES (AVEC IMPORT) */}
                     <div className="hero-models">
                         <img src={modele} alt="Modèles PinkWear" />
                     </div>
                 </div>
             </section>
 
-            {/* ===== ARTICLES ===== */}
+            {/* ===== ARTICLES POPULAIRES ===== */}
             <section className="articles-section">
                 <h2 className="section-title">Articles populaires</h2>
 
                 <div className="article-grid">
-                    {articles.slice(0, 24).map((article) => (
-                        <div className="glass card" key={article.id}>
+                    {articles.slice(0, 8).map((article, index) => (
+                        <div
+                            className={`glass card home-card ${
+                                addedIndex === index ? "added-animation" : ""
+                            }`}
+                            key={article.id}
+                        >
+                            {addedIndex === index && (
+                                <div className="added-toast">✔ Ajouté !</div>
+                            )}
+
                             <div className="card-image-wrapper">
                                 <img
                                     src={article.image}
@@ -101,6 +130,52 @@ const Home = () => {
                                 <p className="card-type">{article.type}</p>
                                 <p className="card-price">{article.price}</p>
                             </div>
+
+                            {user && !user.isAdmin && (
+                                <div className="category-options">
+                                    <select
+                                        defaultValue="S"
+                                        className="category-select"
+                                        onChange={(e) =>
+                                            (article._size = e.target.value)
+                                        }
+                                    >
+                                        <option>XS</option>
+                                        <option>S</option>
+                                        <option>M</option>
+                                        <option>L</option>
+                                        <option>XL</option>
+                                    </select>
+
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        defaultValue={1}
+                                        className="category-qty"
+                                        onChange={(e) =>
+                                            (article._qty = e.target.value)
+                                        }
+                                    />
+
+                                    <button
+                                        className="add-cart-btn"
+                                        onClick={() => {
+                                            addToCart(
+                                                article,
+                                                article._size || "S",
+                                                article._qty || 1
+                                            );
+                                            setAddedIndex(index);
+                                            setTimeout(
+                                                () => setAddedIndex(null),
+                                                700
+                                            );
+                                        }}
+                                    >
+                                        Ajouter au panier
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>

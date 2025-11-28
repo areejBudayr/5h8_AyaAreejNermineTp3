@@ -1,0 +1,312 @@
+/* =============================== */
+/*     HEADER SPÉCIAL CATÉGORIE    */
+/* =============================== */
+
+.cat-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 85px;
+
+  padding: 12px 40px; /* 🔥 Remonté en ajoutant du padding-top */
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 160, 200, 0.25);
+
+  z-index: 1000;
+}
+
+.cat-header .logo {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ff2f8b;
+  cursor: pointer;
+}
+
+.cat-header nav {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+}
+
+.cat-header nav a {
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #ff4fa3;
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.cat-header nav a:hover {
+  color: #ff2f8b;
+  transform: translateY(-2px);
+}
+
+.cat-header .login-btn {
+  padding: 10px 18px;
+  background: #ff3f9e;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.cat-header .login-btn:hover {
+  background: #ff2f8b;
+  transform: translateY(-2px);
+}
+
+
+
+/* =============================== */
+/*     PAGE CATÉGORIE GLOBAL      */
+/* =============================== */
+
+.page-categorie {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #ffeef7 0%, #ffe3f4 50%, #ffd6ef 100%);
+  padding: 0px 0px 40px; /* 🔥 Réduit (de 140 → 120), contenu remonte */
+  
+
+  font-family: "Poppins", sans-serif;
+}
+
+
+
+/* =============================== */
+/* HEADER (INTERNE À LA PAGE)     */
+/* =============================== */
+
+.categorie-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 70px;
+  margin-bottom: 35px;
+}
+
+.back-btn {
+  background: white;
+  border: 2px solid #ff4fa3;
+  padding: 10px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #ff4fa3;
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  background: #ff4fa3;
+  color: white;
+}
+
+.categorie-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ff2f8b;
+}
+
+
+
+/* =============================== */
+/* MESSAGE : PAS D’ARTICLES       */
+/* =============================== */
+
+.no-articles {
+  text-align: center;
+  color: #444;
+  font-size: 18px;
+  margin-top: 60px;
+}
+
+
+
+/* =============================== */
+/* GRID ARTICLES                  */
+/* =============================== */
+
+.categorie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 26px;
+}
+
+.card {
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+
+.card-img {
+  width: 100%;
+  height: 260px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff0f8;
+}
+
+.card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 🔥 affiche l’image au complet */
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+
+.card-info {
+  margin-top: 14px;
+  text-align: center;
+  color: #ff2f8b;
+}
+
+.card-info h3 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.card-info .type {
+  color: #777;
+  font-size: 14px;
+}
+
+.card-info .price {
+  margin-top: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff2f8b;
+}
+/* =============================== */
+/*  BARRE DE RECHERCHE CATÉGORIE   */
+/* =============================== */
+
+.search-wrapper {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 30px auto;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 2px solid rgba(255, 130, 180, 0.4);
+  background: white;
+  font-size: 16px;
+  outline: none;
+  transition: 0.25s ease;
+  color: #444;
+  box-shadow: 0 4px 16px rgba(255, 150, 200, 0.15);
+}
+
+.search-wrapper input:focus {
+  border-color: #ff4fa3;
+  box-shadow: 0 0 0 4px rgba(255, 79, 160, 0.2);
+}
+/* =============================== */
+/*    BOUTONS AJOUTER AU PANIER    */
+/* =============================== */
+
+.category-options {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Style Select (taille) */
+.category-select {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: white;
+  border: 2px solid rgba(255, 120, 170, 0.35);
+  font-size: 15px;
+  cursor: pointer;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.category-select:focus {
+  border-color: #ff4fa3;
+}
+
+/* Qté */
+.category-qty {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 120, 170, 0.35);
+  font-size: 15px;
+  width: 80px;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.category-qty:focus {
+  border-color: #ff4fa3;
+}
+
+.add-cart-btn {
+  padding: 12px;
+  border-radius: 16px;
+  background: #ff3f9e;
+  color: white;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.add-cart-btn:hover {
+  background: #ff2f8b;
+  transform: translateY(-2px);
+}
+
+/* =============================== */
+/*      ANIMATION "AJOUTÉ !"       */
+/* =============================== */
+
+.added-animation {
+  animation: blinkAdded 0.6s ease;
+}
+
+@keyframes blinkAdded {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 128, 170, 0.25); }
+  50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(255, 128, 170, 0.45); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 128, 170, 0.25); }
+}
+
+/* Petit toast ✔ Ajouté */
+.added-toast {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff3f9e;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: fadeToast 0.7s ease forwards;
+}
+
+@keyframes fadeToast {
+  0% { opacity: 0; transform: translateY(-6px); }
+  20% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
