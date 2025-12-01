@@ -1,7 +1,7 @@
+// resources/js/components/articleCard/ArticleCard.jsx
 import { useContext, useState } from "react";
 import { AuthContext } from "../../AuthContext";
 import { CartContext } from "../../CartContext";
-
 import "./ArticleCard.css";
 
 const ArticleCard = ({ article, onEdit, onDelete, index }) => {
@@ -10,36 +10,69 @@ const ArticleCard = ({ article, onEdit, onDelete, index }) => {
 
     const [size, setSize] = useState("S");
     const [quantity, setQuantity] = useState(1);
-    const [added, setAdded] = useState(false); // animation
+    const [added, setAdded] = useState(false);
 
     const handleAdd = () => {
-        addToCart(article, size, quantity);
+        // Adapter pour le panier (forme ancienne)
+        addToCart(
+            {
+                id: article.id,
+                description: article.description,
+                type: article.categorie,
+                price: article.prix,
+                image: article.image_url,
+            },
+            size,
+            quantity
+        );
 
-        setAdded(true); // trigger animation
-        setTimeout(() => setAdded(false), 700); // reset after animation
+        setAdded(true);
+        setTimeout(() => setAdded(false), 700);
     };
 
     return (
         <div className={`article-card ${added ? "added-animation" : ""}`}>
             {added && <div className="added-toast">✔ Ajouté !</div>}
 
-            {article.image && (
+            {article.image_url && (
                 <div className="article-media">
-                    <img src={article.image} className="article-image" alt="" />
+                    <img
+                        src={article.image_url}
+                        className="article-image"
+                        alt=""
+                    />
                 </div>
             )}
 
+            {/* ↘ Ordre = comme la BD */}
+            <p>
+                <strong>Nom :</strong> {article.nom}
+            </p>
             <p>
                 <strong>Description :</strong> {article.description}
             </p>
             <p>
-                <strong>Type :</strong> {article.type}
+                <strong>Prix :</strong> {article.prix}$
             </p>
             <p>
-                <strong>Prix :</strong> {article.price}$
+                <strong>Quantité :</strong> {article.quantite}
+            </p>
+            <p>
+                <strong>Catégorie :</strong> {article.categorie}
+            </p>
+            <p>
+                <strong>Marque :</strong> {article.marque}
+            </p>
+            <p>
+                <strong>Taille :</strong> {article.taille}
+            </p>
+            <p>
+                <strong>Couleur :</strong> {article.couleur}
+            </p>
+            <p>
+                <strong>Sexe :</strong> {article.sexe}
             </p>
 
-            {/* 🛒 UTILISATEUR NORMAL */}
             {user && !user.isAdmin && (
                 <div className="panier-options">
                     <select
@@ -66,7 +99,6 @@ const ArticleCard = ({ article, onEdit, onDelete, index }) => {
                 </div>
             )}
 
-            {/* 🔧 ADMIN */}
             {user?.isAdmin && (
                 <div className="article-card-buttons">
                     <button

@@ -3,19 +3,18 @@ import { useState, useContext } from "react";
 import { useNavigate, Link, useOutletContext } from "react-router-dom";
 
 import { AuthContext } from "../AuthContext";
-
 import modele from "../assets/modele.png";
 import fond from "../assets/fond.png";
 import "./Home.css";
 
 const Home = () => {
     const { isLoggedIn, logout, user } = useContext(AuthContext);
-
-    // articles + addToCart viennent de RootLayout
-    const { articles, addToCart } = useOutletContext();
+    const { articles, addToCart, loading } = useOutletContext();
 
     const [addedIndex, setAddedIndex] = useState(null);
     const navigate = useNavigate();
+
+    if (loading) return <h2>Chargement…</h2>;
 
     return (
         <div className="home">
@@ -117,18 +116,30 @@ const Home = () => {
                             )}
 
                             <div className="card-image-wrapper">
-                                <img
-                                    src={article.image}
-                                    alt={article.description}
-                                />
+                                {article.image_url && (
+                                    <img
+                                        src={article.image_url}
+                                        alt={article.description}
+                                    />
+                                )}
                             </div>
 
                             <div className="card-info">
-                                <p className="card-desc">
+                                {/* ↘ Même ordre que la BD */}
+                                <p>
+                                    <strong>Nom :</strong> {article.nom}
+                                </p>
+                                <p>
+                                    <strong>Description :</strong>{" "}
                                     {article.description}
                                 </p>
-                                <p className="card-type">{article.type}</p>
-                                <p className="card-price">{article.price}</p>
+                                <p>
+                                    <strong>Prix :</strong> {article.prix}$
+                                </p>
+                                <p>
+                                    <strong>Quantité :</strong>{" "}
+                                    {article.quantite}
+                                </p>
                             </div>
 
                             {user && !user.isAdmin && (
@@ -160,8 +171,16 @@ const Home = () => {
                                     <button
                                         className="add-cart-btn"
                                         onClick={() => {
+                                            // on adapte pour le panier
                                             addToCart(
-                                                article,
+                                                {
+                                                    id: article.id,
+                                                    description:
+                                                        article.description,
+                                                    type: article.categorie,
+                                                    price: article.prix,
+                                                    image: article.image_url,
+                                                },
                                                 article._size || "S",
                                                 article._qty || 1
                                             );

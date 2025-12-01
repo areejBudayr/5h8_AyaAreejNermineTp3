@@ -21,13 +21,21 @@ const ArticleList = () => {
 
     useEffect(() => {
         const s = search.toLowerCase();
+
         setFilteredArticles(
-            articles.filter(
-                (a) =>
-                    a.description.toLowerCase().includes(s) ||
-                    a.type.toLowerCase().includes(s) ||
-                    a.price.toString().includes(s)
-            )
+            articles.filter((a) => {
+                const nom = (a.nom || "").toLowerCase();
+                const description = (a.description || "").toLowerCase();
+                const categorie = (a.categorie || "").toLowerCase();
+                const prix = a.prix != null ? String(a.prix) : "";
+
+                return (
+                    nom.includes(s) ||
+                    description.includes(s) ||
+                    categorie.includes(s) ||
+                    prix.includes(s)
+                );
+            })
         );
     }, [search, articles]);
 

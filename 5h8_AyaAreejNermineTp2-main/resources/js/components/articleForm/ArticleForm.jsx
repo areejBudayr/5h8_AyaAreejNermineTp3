@@ -18,7 +18,7 @@ const ArticleForm = () => {
     //     }
     // }, [isLoggedIn]);
 
-    // 🔐 BLOQUER L'ACCÈS SI L'UTILISATEUR N'EST PAS ADMIN
+    //  BLOQUER L'ACCÈS SI L'UTILISATEUR N'EST PAS ADMIN
     useEffect(() => {
         if (!user?.isAdmin) {
             navigate("/"); // redirection automatique
