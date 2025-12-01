@@ -1,8 +1,8 @@
 // resources/js/pages/Home.jsx
 import { useState, useContext } from "react";
 import { useNavigate, Link, useOutletContext } from "react-router-dom";
-
 import { AuthContext } from "../AuthContext";
+
 import modele from "../assets/modele.png";
 import fond from "../assets/fond.png";
 import "./Home.css";
@@ -16,6 +16,8 @@ const Home = () => {
 
     if (loading) return <h2>Chargement…</h2>;
 
+    const isAdmin = user?.isAdmin;
+    const isNormalUser = user && !user.isAdmin;
     return (
         <div className="home">
             {/* ===== HEADER ===== */}
@@ -31,7 +33,7 @@ const Home = () => {
                         Hoodies et vestes
                     </Link>
 
-                    {user && !user.isAdmin && (
+                    {isNormalUser && (
                         <button
                             className="login-btn"
                             onClick={() => navigate("/panier")}
@@ -76,7 +78,7 @@ const Home = () => {
                             pastel.
                         </p>
 
-                        {user?.isAdmin ? (
+                        {isAdmin ? (
                             <button
                                 className="hero-btn"
                                 onClick={() => navigate("/add")}
@@ -125,7 +127,6 @@ const Home = () => {
                             </div>
 
                             <div className="card-info">
-                                {/* ↘ Même ordre que la BD */}
                                 <p>
                                     <strong>Nom :</strong> {article.nom}
                                 </p>
@@ -142,7 +143,7 @@ const Home = () => {
                                 </p>
                             </div>
 
-                            {user && !user.isAdmin && (
+                            {isNormalUser && (
                                 <div className="category-options">
                                     <select
                                         defaultValue="S"
@@ -171,7 +172,6 @@ const Home = () => {
                                     <button
                                         className="add-cart-btn"
                                         onClick={() => {
-                                            // on adapte pour le panier
                                             addToCart(
                                                 {
                                                     id: article.id,

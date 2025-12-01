@@ -1,32 +1,72 @@
+// resources/js/pages/Register.jsx
 import { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import fond from "../assets/fond2.png";
 import "./register.css";
 
+const getCsrfToken = () => {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute("content") : "";
+};
 const Register = () => {
     const [prenom, setPrenom] = useState("");
     const [nom, setNom] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
+        setError("");
+        setLoading(true);
 
-        console.log("NOUVEL UTILISATEUR :", {
-            prenom,
-            nom,
-            email,
-            username,
-            password,
-        });
+        try {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": getCsrfToken(), // ✅ important
+                    "X-Requested-With": "XMLHttpRequest", // ✅ classique Laravel
+                },
+                credentials: "same-origin", // envoie les cookies si besoin
+                body: JSON.stringify({
+                    name: `${prenom} ${nom}`,
+                    email,
+                    password,
+                    password_confirmation: passwordConfirm,
+                }),
+            });
 
-        alert("Compte créé !");
-        navigate("/login");
+            const data = await response.json();
+
+            if (!response.ok || data.success === false) {
+                setError(data.message || "Erreur d'inscription");
+                setLoading(false);
+                return;
+            }
+
+            // data.data = { user, token }
+            // ✅ on stocke directement le user + token dans le contexte
+            login({
+                ...data.data.user,
+                token: data.data.token,
+            });
+
+            navigate("/");
+        } catch (err) {
+            console.error(err);
+            setError("Erreur serveur, réessaie plus tard.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -40,19 +80,17 @@ const Register = () => {
                 backgroundAttachment: "fixed",
             }}
         >
-            {/* Overlay */}
             <div className="login-overlay"></div>
 
-            {/* Carte */}
             <div className="login-box glass">
                 <h2 className="login-title">Inscription</h2>
 
-                {/* FORMULAIRE */}
+                {error && <p className="error">{error}</p>}
+
                 <form
                     onSubmit={handleRegister}
                     className="login-form grid-form"
                 >
-                    {/* Prénom + Nom */}
                     <div className="two-cols">
                         <input
                             type="text"
@@ -70,7 +108,6 @@ const Register = () => {
                         />
                     </div>
 
-                    {/* Email */}
                     <input
                         type="email"
                         placeholder="Adresse email"
@@ -79,14 +116,12 @@ const Register = () => {
                         required
                     />
 
-                    {/* Username + Password */}
                     <div className="two-cols">
                         <input
                             type="text"
                             placeholder="Nom d'utilisateur"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            required
                         />
                         <input
                             type="password"
@@ -97,8 +132,20 @@ const Register = () => {
                         />
                     </div>
 
-                    <button className="login-btn" type="submit">
-                        S’inscrire
+                    <input
+                        type="password"
+                        placeholder="Confirmer le mot de passe"
+                        value={passwordConfirm}
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        required
+                    />
+
+                    <button
+                        className="login-btn"
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {loading ? "Création du compte..." : "S’inscrire"}
                     </button>
                 </form>
 

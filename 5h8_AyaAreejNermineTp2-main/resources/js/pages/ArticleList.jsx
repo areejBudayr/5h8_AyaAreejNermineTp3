@@ -1,3 +1,4 @@
+// resources/js/pages/ArticleList.jsx
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../AuthContext";
@@ -5,10 +6,10 @@ import ArticleCard from "../components/articleCard/ArticleCard";
 import "./ArticleList.css";
 
 const ArticleList = () => {
-    // On récupère l'objet envoyé par RootLayout
-    const { articles, setArticles } = useOutletContext();
+    const { articles } = useOutletContext(); // plus besoin de setArticles ici
     const { isLoggedIn, user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [articleToDelete, setArticleToDelete] = useState(null);
 
     const [search, setSearch] = useState("");
     const [filteredArticles, setFilteredArticles] = useState([]);
@@ -16,6 +17,44 @@ const ArticleList = () => {
     const handleSearch = (e) => {
         if (e.key === "Enter" && search.trim() !== "") {
             navigate(`/articles?q=${encodeURIComponent(search.trim())}`);
+        }
+    };
+    const handleDelete = (article) => {
+        setArticleToDelete(article);
+    };
+    const confirmDelete = async () => {
+        if (!articleToDelete) return;
+
+        try {
+            const res = await fetch(`/api/produits/${articleToDelete.id}`, {
+                method: "DELETE",
+                headers: {
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute("content"),
+                    ...(user?.token
+                        ? { Authorization: `Bearer ${user.token}` }
+                        : {}),
+                },
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert("Erreur : impossible de supprimer l'article.");
+                return;
+            }
+
+            // enlever l’article du tableau local
+            setArticles((prev) =>
+                prev.filter((a) => a.id !== articleToDelete.id)
+            );
+
+            setArticleToDelete(null);
+        } catch (e) {
+            console.error(e);
+            alert("Erreur serveur.");
         }
     };
 
@@ -39,50 +78,6 @@ const ArticleList = () => {
         );
     }, [search, articles]);
 
-    // EDIT MODAL
-    const [editArticle, setEditArticle] = useState(null);
-    const [editedDescription, setEditedDescription] = useState("");
-    const [editedPrice, setEditedPrice] = useState("");
-    const [editedImage, setEditedImage] = useState("");
-    const [editedType, setEditedType] = useState("");
-
-    const handleEdit = (article) => {
-        setEditArticle(article);
-        setEditedDescription(article.description);
-        setEditedType(article.type);
-        setEditedPrice(article.price);
-        setEditedImage(article.image);
-    };
-
-    const handleSave = () => {
-        setArticles(
-            articles.map((article) =>
-                article.id === editArticle.id
-                    ? {
-                          ...article,
-                          description: editedDescription,
-                          type: editedType,
-                          price: editedPrice,
-                          image: editedImage,
-                      }
-                    : article
-            )
-        );
-        setEditArticle(null);
-    };
-
-    // DELETE MODAL
-    const [articleToDelete, setArticleToDelete] = useState(null);
-
-    const handleDelete = (article) => setArticleToDelete(article);
-
-    const confirmDelete = () => {
-        if (articleToDelete) {
-            setArticles(articles.filter((a) => a.id !== articleToDelete.id));
-            setArticleToDelete(null);
-        }
-    };
-
     return (
         <div className="home">
             {/* ===== HEADER ===== */}
@@ -91,7 +86,7 @@ const ArticleList = () => {
                     NAAR
                 </div>
 
-                {/* 🔍 SEARCHBAR (qu’on garde) */}
+                {/* 🔍 Barre de recherche */}
                 <div className="header-search">
                     <input
                         type="text"
@@ -116,7 +111,8 @@ const ArticleList = () => {
                     <a onClick={() => navigate("/categorie/Hoodies_et_vestes")}>
                         Hoodies et vestes
                     </a>
-                    {user && !user.isAdmin && (
+
+                    {user && user.role !== "ADMIN" && (
                         <button
                             className="login-btn"
                             onClick={() => navigate("/panier")}
@@ -124,6 +120,7 @@ const ArticleList = () => {
                             Panier
                         </button>
                     )}
+
                     {!isLoggedIn ? (
                         <>
                             <button
@@ -150,8 +147,8 @@ const ArticleList = () => {
             <div className="article-page">
                 <h2 className="titre">Articles</h2>
 
-                {/* 🔐 ADMIN ONLY : Ajouter */}
-                {isLoggedIn && user?.isAdmin && (
+                {/* 🔐 ADMIN ONLY : bouton ajouter */}
+                {isLoggedIn && user?.role === "ADMIN" && (
                     <button
                         className="login-btn"
                         onClick={() => navigate("/add")}
@@ -160,109 +157,41 @@ const ArticleList = () => {
                     </button>
                 )}
 
-                {/* ARTICLE GRID */}
+                {/* Grille d’articles */}
                 <div className="full-bleed">
                     <div className="article-container">
                         {filteredArticles.map((article) => (
                             <ArticleCard
                                 key={article.id}
                                 article={article}
-                                onEdit={
-                                    user?.isAdmin
-                                        ? () => handleEdit(article)
-                                        : null
-                                }
-                                onDelete={
-                                    user?.isAdmin
-                                        ? () => handleDelete(article)
-                                        : null
-                                }
+                                onDelete={handleDelete}
                             />
                         ))}
                     </div>
                 </div>
+                {articleToDelete && (
+                    <div className="delete-modal">
+                        <div className="delete-box glass">
+                            <h3>Supprimer cet article ?</h3>
+                            <p>
+                                Voulez-vous vraiment supprimer :{" "}
+                                <strong>{articleToDelete.nom}</strong> ?
+                            </p>
 
-                {/* EDIT MODAL (admin only) */}
-                {editArticle && user?.isAdmin && (
-                    <div className="modal">
-                        <div className="edit-form">
-                            <label>Description:</label>
-                            <input
-                                type="text"
-                                value={editedDescription}
-                                onChange={(e) =>
-                                    setEditedDescription(e.target.value)
-                                }
-                            />
-
-                            <label>Type:</label>
-                            <input
-                                type="text"
-                                value={editedType}
-                                onChange={(e) => setEditedType(e.target.value)}
-                            />
-
-                            <label>Prix:</label>
-                            <input
-                                type="text"
-                                value={editedPrice}
-                                onChange={(e) => setEditedPrice(e.target.value)}
-                            />
-
-                            <label>Image:</label>
-                            <input
-                                type="text"
-                                value={editedImage}
-                                onChange={(e) => setEditedImage(e.target.value)}
-                            />
-
-                            {editedImage && (
-                                <img
-                                    src={editedImage}
-                                    className="preview-image"
-                                    alt="preview"
-                                />
-                            )}
-
-                            <div className="edit-actions">
+                            <div className="modal-buttons">
                                 <button
-                                    className="save-button"
-                                    onClick={handleSave}
+                                    className="delete-confirm"
+                                    onClick={confirmDelete}
                                 >
-                                    Mettre à jour
+                                    Oui, supprimer
                                 </button>
                                 <button
-                                    className="cancel-button"
-                                    onClick={() => setEditArticle(null)}
+                                    className="delete-cancel"
+                                    onClick={() => setArticleToDelete(null)}
                                 >
                                     Annuler
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* DELETE MODAL (admin only) */}
-                {articleToDelete && user?.isAdmin && (
-                    <div className="modal">
-                        <p>
-                            Êtes-vous sûr de vouloir supprimer cet article ?
-                            Cette action est irréversible.
-                        </p>
-
-                        <div className="modal-actions">
-                            <button
-                                className="delete-button"
-                                onClick={confirmDelete}
-                            >
-                                Confirmer
-                            </button>
-                            <button
-                                className="cancel-button"
-                                onClick={() => setArticleToDelete(null)}
-                            >
-                                Annuler
-                            </button>
                         </div>
                     </div>
                 )}

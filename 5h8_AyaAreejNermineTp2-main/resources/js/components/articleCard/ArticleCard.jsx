@@ -1,19 +1,21 @@
 // resources/js/components/articleCard/ArticleCard.jsx
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ IMPORT IMPORTANT
 import { AuthContext } from "../../AuthContext";
 import { CartContext } from "../../CartContext";
 import "./ArticleCard.css";
 
-const ArticleCard = ({ article, onEdit, onDelete, index }) => {
+const ArticleCard = ({ article, onDelete }) => {
     const { user } = useContext(AuthContext);
     const { addToCart } = useContext(CartContext);
+    const navigate = useNavigate();
 
     const [size, setSize] = useState("S");
     const [quantity, setQuantity] = useState(1);
     const [added, setAdded] = useState(false);
 
     const handleAdd = () => {
-        // Adapter pour le panier (forme ancienne)
+        // Adapté au panier (même format qu’avant)
         addToCart(
             {
                 id: article.id,
@@ -73,7 +75,8 @@ const ArticleCard = ({ article, onEdit, onDelete, index }) => {
                 <strong>Sexe :</strong> {article.sexe}
             </p>
 
-            {user && !user.isAdmin && (
+            {/* 🛒 Utilisateur normal → panier */}
+            {user && user.role !== "ADMIN" && (
                 <div className="panier-options">
                     <select
                         value={size}
@@ -99,17 +102,18 @@ const ArticleCard = ({ article, onEdit, onDelete, index }) => {
                 </div>
             )}
 
-            {user?.isAdmin && (
+            {/* 🔧 Admin → redirection vers /edit/:id */}
+            {user?.role === "ADMIN" && (
                 <div className="article-card-buttons">
                     <button
                         className="edit-button"
-                        onClick={() => onEdit(index)}
+                        onClick={() => navigate(`/edit/${article.id}`)}
                     >
                         Modifier
                     </button>
                     <button
                         className="delete-button"
-                        onClick={() => onDelete(index)}
+                        onClick={() => onDelete(article)} // callback depuis parent
                     >
                         Supprimer
                     </button>
