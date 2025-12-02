@@ -7,7 +7,15 @@
 
     {{-- CSS compilé par Laravel Mix --}}
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+
+    {{-- CSRF pour les requêtes fetch --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- 🔑 clé reCAPTCHA envoyée à React --}}
+    <meta name="recaptcha-site-key" content="{{ env('RECAPTCHA_SITE_KEY') }}">
+
+    {{-- Script reCAPTCHA v2 checkbox --}}
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
     <div id="app"></div>

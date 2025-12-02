@@ -7,40 +7,70 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;   // 👈 important pour l’appel à Google
 use App\Models\User;
 
 class RegisterController extends BaseController
 {
-    // POST /api/register
+    /**
+     * REGISTER : POST /api/register
+     */
     public function register(Request $request)
     {
+        // 1. Valider les champs + le captcha
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'name'                 => 'required|string|max:255',
+            'email'                => 'required|email|unique:users,email',
+            'password'             => 'required|string|min:6|confirmed',
+            'g-recaptcha-response' => 'required|string',   // 👈 virgule, pas point-virgule
         ]);
 
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first(), 422);
         }
 
-        // rôle par défaut : USER (tu pourras mettre ADMIN à la main en BD)
+        // 2. Vérification reCAPTCHA via Google API
+        $response = Http::asForm()->post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            [
+                'secret'   => env('RECAPTCHA_SECRET_KEY'),
+                'response' => $request->input('g-recaptcha-response'),
+                'remoteip' => $request->ip(),
+            ]
+        );
+
+        $captcha = $response->json();
+
+        if (!isset($captcha['success']) || $captcha['success'] !== true) {
+            return $this->sendError(
+                'Captcha invalide. Veuillez cocher "Je ne suis pas un robot".',
+                422
+            );
+        }
+
+        // 3. Créer l'utilisateur
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'USER',
+            'role'     => 'USER', // rôle par défaut
         ]);
 
+        // 4. Générer un token Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $this->sendResponse([
-            'user'  => $user,
-            'token' => $token,
-        ], 'Utilisateur enregistré avec succès.');
+        return $this->sendResponse(
+            [
+                'user'  => $user,
+                'token' => $token,
+            ],
+            'Utilisateur enregistré avec succès.'
+        );
     }
 
-    // POST /api/login
+    /**
+     * LOGIN : POST /api/login
+     */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -61,9 +91,12 @@ class RegisterController extends BaseController
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $this->sendResponse([
-            'user'  => $user,
-            'token' => $token,
-        ], 'Connexion réussie.');
+        return $this->sendResponse(
+            [
+                'user'  => $user,
+                'token' => $token,
+            ],
+            'Connexion réussie.'
+        );
     }
 }
